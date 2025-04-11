@@ -2,9 +2,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  LayoutDashboard, Mail, FileText, Users, PieChart, 
-  Settings, HelpCircle, Inbox, SendHorizontal, FileClock, 
-  Timer, MailQuestion 
+  LayoutDashboard, Mail, FileText, Users, 
+  Settings, Inbox, FileClock, 
+  Timer, MailQuestion, AtSign
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -55,27 +55,20 @@ const Sidebar = () => {
           <p className="text-white/70 text-xs uppercase font-medium">Email Campaigns</p>
         </div>
         <SidebarLink to="/campaigns" icon={Mail} label="Campaigns" />
-        <SidebarLink to="/templates" icon={FileText} label="Templates" />
         <SidebarLink to="/contacts" icon={Users} label="Contacts" />
+        <SidebarLink to="/email-accounts" icon={AtSign} label="Email Accounts" />
         
         <div className="mt-4 mb-2 px-4">
           <p className="text-white/70 text-xs uppercase font-medium">Inbox</p>
         </div>
         <SidebarLink to="/inbox" icon={Inbox} label="Received" />
-        <SidebarLink to="/sent" icon={SendHorizontal} label="Sent" />
         <SidebarLink to="/scheduled" icon={FileClock} label="Scheduled" />
         <SidebarLink to="/follow-ups" icon={Timer} label="Follow-ups" />
         <SidebarLink to="/bounced" icon={MailQuestion} label="Bounced" />
-        
-        <div className="mt-4 mb-2 px-4">
-          <p className="text-white/70 text-xs uppercase font-medium">Analytics</p>
-        </div>
-        <SidebarLink to="/analytics" icon={PieChart} label="Performance" />
       </div>
       
       <div className="p-3 border-t border-white/10">
         <SidebarLink to="/settings" icon={Settings} label="Settings" />
-        <SidebarLink to="/help" icon={HelpCircle} label="Help Center" />
       </div>
 
       <div className="p-4 flex items-center gap-3 border-t border-white/10">

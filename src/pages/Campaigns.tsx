@@ -5,6 +5,7 @@ import {
   MoreHorizontal, ChevronDown, Settings, 
   Play, Pause, Trash2, Edit, Copy, Eye  
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { 
@@ -43,14 +44,14 @@ const campaignsData = [
   },
   {
     id: 3,
-    name: 'Product Launch Announcement',
-    status: 'scheduled',
-    progress: 0,
-    sent: 0,
-    total: 1200,
-    opened: 0,
-    replies: 0,
-    scheduled: 'May 15, 2025',
+    name: 'Spotify',
+    status: 'active',
+    progress: 64,
+    sent: 1972,
+    total: 3080,
+    opened: 956,
+    replies: 128,
+    scheduled: null,
     created: 'Apr 18, 2025'
   },
   {
@@ -149,7 +150,9 @@ const Campaigns = () => {
                         )}
                       </div>
                       <div>
-                        <p className="font-medium text-instantly-dark">{campaign.name}</p>
+                        <Link to={`/campaigns/${campaign.id}`} className="font-medium text-instantly-dark hover:text-instantly-blue">
+                          {campaign.name}
+                        </Link>
                         {campaign.scheduled && (
                           <p className="text-xs text-gray-500 flex items-center gap-1">
                             <Calendar size={12} />
@@ -194,9 +197,11 @@ const Campaigns = () => {
                   </td>
                   <td className="px-5 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                        <Eye size={16} />
-                      </Button>
+                      <Link to={`/campaigns/${campaign.id}`}>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                          <Eye size={16} />
+                        </Button>
+                      </Link>
                       
                       {campaign.status === 'active' && (
                         <Button variant="ghost" size="sm" className="h-8 w-8 p-0">

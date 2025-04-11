@@ -7,7 +7,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainLayout from "@/components/layout/MainLayout";
 import Dashboard from "@/pages/Dashboard";
 import Campaigns from "@/pages/Campaigns";
-import Templates from "@/pages/Templates";
+import CampaignDetail from "@/pages/CampaignDetail";
+import Contacts from "@/pages/Contacts";
+import EmailAccounts from "@/pages/EmailAccounts";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,9 +36,19 @@ const App = () => (
               <Campaigns />
             </MainLayout>
           } />
-          <Route path="/templates" element={
+          <Route path="/campaigns/:id" element={
             <MainLayout>
-              <Templates />
+              <CampaignDetail />
+            </MainLayout>
+          } />
+          <Route path="/contacts" element={
+            <MainLayout>
+              <Contacts />
+            </MainLayout>
+          } />
+          <Route path="/email-accounts" element={
+            <MainLayout>
+              <EmailAccounts />
             </MainLayout>
           } />
           <Route path="*" element={<NotFound />} />
