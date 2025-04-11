@@ -3,7 +3,8 @@ import React from 'react';
 import { 
   BarChart3, ArrowUp, ArrowDown, Eye, 
   Mail, UserCheck, MessageSquare, 
-  BarChart2, Activity, TrendingUp, Zap, Plus 
+  BarChart2, Activity, TrendingUp, Zap, Plus,
+  FileText // Added this import
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
