@@ -4,7 +4,8 @@ import { useParams, Link } from 'react-router-dom';
 import { 
   ChevronRight, Pause, Play, Users, Clock, 
   Settings, ListChecks, Search, Plus, Upload, 
-  CalendarClock, MoreHorizontal, ArrowRight, File
+  CalendarClock, MoreHorizontal, ArrowRight, File,
+  Trash2, Edit
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -59,6 +60,8 @@ const CampaignDetail = () => {
   ]);
   
   const [openSequenceDialog, setOpenSequenceDialog] = useState(false);
+  const [editingSequence, setEditingSequence] = useState<boolean>(false);
+  const [selectedSequence, setSelectedSequence] = useState<Sequence | null>(null);
   const [newSequence, setNewSequence] = useState<Partial<Sequence>>({
     title: '',
     content: '',
@@ -75,21 +78,51 @@ const CampaignDetail = () => {
       return;
     }
 
-    const sequence: Sequence = {
-      id: sequences.length + 1,
-      title: newSequence.title!,
-      content: newSequence.content!,
-      waitDays: newSequence.waitDays || 0
-    };
+    if (editingSequence && selectedSequence) {
+      // Update existing sequence
+      const updatedSequences = sequences.map(seq => 
+        seq.id === selectedSequence.id 
+          ? { ...seq, title: newSequence.title!, content: newSequence.content!, waitDays: newSequence.waitDays || 0 } 
+          : seq
+      );
+      setSequences(updatedSequences);
+      toast.success('Sequence updated successfully');
+    } else {
+      // Add new sequence
+      const sequence: Sequence = {
+        id: sequences.length + 1,
+        title: newSequence.title!,
+        content: newSequence.content!,
+        waitDays: newSequence.waitDays || 0
+      };
+      setSequences([...sequences, sequence]);
+      toast.success('Sequence step added successfully');
+    }
 
-    setSequences([...sequences, sequence]);
     setNewSequence({
       title: '',
       content: '',
       waitDays: 2
     });
+    setEditingSequence(false);
+    setSelectedSequence(null);
     setOpenSequenceDialog(false);
-    toast.success('Sequence step added successfully');
+  };
+
+  const handleEditSequence = (sequence: Sequence) => {
+    setSelectedSequence(sequence);
+    setNewSequence({
+      title: sequence.title,
+      content: sequence.content,
+      waitDays: sequence.waitDays
+    });
+    setEditingSequence(true);
+    setOpenSequenceDialog(true);
+  };
+
+  const handleDeleteSequence = (id: number) => {
+    setSequences(sequences.filter(seq => seq.id !== id));
+    toast.success('Sequence step deleted successfully');
   };
 
   const handleAddLead = () => {
@@ -372,9 +405,9 @@ const CampaignDetail = () => {
               </DialogTrigger>
               <DialogContent className="sm:max-w-[600px]">
                 <DialogHeader>
-                  <DialogTitle>Add Sequence Step</DialogTitle>
+                  <DialogTitle>{editingSequence ? 'Edit Sequence Step' : 'Add Sequence Step'}</DialogTitle>
                   <DialogDescription>
-                    Create a new email for your sequence
+                    {editingSequence ? 'Update existing email sequence step' : 'Create a new email for your sequence'}
                   </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
@@ -422,8 +455,17 @@ const CampaignDetail = () => {
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button variant="outline" onClick={() => setOpenSequenceDialog(false)}>Cancel</Button>
-                  <Button onClick={handleAddSequence}>Add Sequence Step</Button>
+                  <Button variant="outline" onClick={() => {
+                    setOpenSequenceDialog(false);
+                    setEditingSequence(false);
+                    setSelectedSequence(null);
+                    setNewSequence({
+                      title: '',
+                      content: '',
+                      waitDays: 2
+                    });
+                  }}>Cancel</Button>
+                  <Button onClick={handleAddSequence}>{editingSequence ? 'Update' : 'Add'} Sequence Step</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
@@ -447,8 +489,24 @@ const CampaignDetail = () => {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm">Edit</Button>
-                    <Button variant="ghost" size="sm" className="text-instantly-red">Delete</Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex items-center gap-1"
+                      onClick={() => handleEditSequence(sequence)}
+                    >
+                      <Edit size={14} />
+                      Edit
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="text-instantly-red flex items-center gap-1"
+                      onClick={() => handleDeleteSequence(sequence.id)}
+                    >
+                      <Trash2 size={14} />
+                      Delete
+                    </Button>
                   </div>
                 </div>
                 <div className="p-4 bg-gray-50 text-sm whitespace-pre-line">
@@ -611,14 +669,14 @@ const CampaignDetail = () => {
               
               <div className="space-y-4">
                 <div>
-                  <Label>Unsubscribe Link</Label>
-                  <Select defaultValue="footer">
+                  <Label>Send as Plain HTML</Label>
+                  <Select defaultValue="no">
                     <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Select unsubscribe option" />
+                      <SelectValue placeholder="Select HTML option" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="footer">Include in email footer</SelectItem>
-                      <SelectItem value="none">Don't include</SelectItem>
+                      <SelectItem value="yes">Yes - Send as HTML</SelectItem>
+                      <SelectItem value="no">No - Send as plain text</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -632,19 +690,6 @@ const CampaignDetail = () => {
                     <SelectContent>
                       <SelectItem value="stop">Stop sequence on reply</SelectItem>
                       <SelectItem value="continue">Continue sequence after reply</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div>
-                  <Label>Email Warm-up</Label>
-                  <Select defaultValue="on">
-                    <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Select warm-up option" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="on">Enabled - Gradually increase sending</SelectItem>
-                      <SelectItem value="off">Disabled - Send at full volume</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -662,3 +707,4 @@ const CampaignDetail = () => {
 };
 
 export default CampaignDetail;
+
