@@ -450,7 +450,7 @@ const CampaignDetail = () => {
                       onChange={(e) => setNewSequence({...newSequence, content: e.target.value})}
                     />
                     <p className="text-xs text-gray-500">
-                      Use {{name}} to personalize with the recipient's name
+                      Use {"{{name}}"} to personalize with the recipient's name
                     </p>
                   </div>
                 </div>
@@ -707,4 +707,3 @@ const CampaignDetail = () => {
 };
 
 export default CampaignDetail;
-
